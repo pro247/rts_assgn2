@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Microwave Oven Simulator</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <main class="oven" id="oven">
+        <section class="dwrap" id="dwrap" aria-label="Food container">
+            <div class="interior" id="int">
+                <div class="plate"></div>
+                <div class="food">🍛</div>
+            </div>
+            <div class="door">
+                <div class="win"></div>
+                <div class="brand">MUBAS · RTS 521</div>
+            </div>
+        </section>
+        <section class="panel">
+            <div class="led" aria-live="polite">
+                <div class="time" id="time">00:00:00</div>
+                <div class="msg" id="msg"></div>
+            </div>
+            <div class="keys">
+                <button class="s2" data-p="300">Half Power (300W)</button><button class="s2" data-p="600">Full Power (600W)</button>
+                <button data-add="10">+10s</button><button data-add="60">+1m</button><button data-add="600">+10m</button><button class="clr"
+                    id="clr">Clear Time</button>
+            </div>
+            <div class="keys">
+                <button data-d="7">7</button><button data-d="8">8</button><button data-d="9">9</button><button class="go"
+                    id="start">Start</button>
+                <button data-d="4">4</button><button data-d="5">5</button><button data-d="6">6</button><button class="halt"
+                    id="stop">Stop</button>
+                <button data-d="1">1</button><button data-d="2">2</button><button data-d="3">3</button><button class="r2" id="dbtn">Open/
+                    Close Door</button>
+                <button></button><button data-d="0">0</button><button></button>
+            </div>
+            <div class="status" id="status"></div>
+            <details>
+                <summary>Fault simulation</summary>
+                <label><input type="checkbox" id="ft"> Turntable fault</label> <label><input type="checkbox" id="fe"> Emitter fault</label>
+            </details>
+        </section>
+    </main>
+    <script src="js/script.js"></script>
+</body>
+
+</html>
