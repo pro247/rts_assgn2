@@ -1,0 +1,460 @@
+/* Microwave Oven Simulator - RTS 521 Assignment 2 - styles */
+
+/* ---------- 1. COLOUR PALETTE ---------- */
+:root {
+    /* page */
+    --page-light: #d9dde3;
+    --page-dark: #aab0ba;
+
+    /* oven body */
+    --body-top: #2b2f36;
+    --body-bottom: #0c0d10;
+    --body-edge: #8b929c;
+    --body-line: #444444;
+    --body-shadow: #00000077;
+    --foot: #111111;
+    --front-panel: #08090b;
+    --brand: #b5bac3;
+    --muted: #aab0ba;
+
+    /* interior (door open or lamp on) */
+    --cavity-off: #17191d;
+    --cavity-shade: #00000088;
+    --cavity-shade-lamp: #00000066;
+    --cavity-shade-cook: #00000044;
+    --lamp-centre: #fff4bd;
+    --lamp-edge: #c9a944;
+
+    /* cooking light (dim amber) */
+    --cook-centre: #d9b36a;
+    --cook-mid: #9a6a22;
+    --cook-edge: #4a2f0a;
+    --cook-rim: #b8560a;
+
+    /* turntable plate */
+    --plate-a: #e8f3f9aa;
+    --plate-b: #8fb0c266;
+    --plate-edge: #ffffffaa;
+
+    /* door */
+    --door-border: #555555;
+    --door-shadow: #00000088;
+    --door-frame: #15181d;
+    --glass-edge: #20232a;
+    --glass-closed: rgba(8, 10, 14, 0.86);
+    --glass-lamp: rgba(20, 16, 8, 0.3);
+    --glass-cook: rgba(255, 190, 90, 0.06);
+    --glare: #ffffff1f;
+    --glare-soft: #ffffff12;
+    --glare-cook: #ffffff33;
+    --glare-cook-soft: #ffffff1f;
+    --mesh: rgba(0, 0, 0, 0.6);
+
+    /* display (blue LED) */
+    --led-bg: #050b1c;
+    --led-border: #333b4d;
+    --led-text: #58b4ff;
+    --led-glow: #2a8cff;
+
+    /* keys */
+    --key-top: #4b505a;
+    --key-bottom: #2a2d34;
+    --key-border: #555b66;
+    --key-text: #e6e9ee;
+    --focus: #58b4ff;
+    --go-top: #3fae6a;
+    --go-bottom: #1f7a44;
+    --stop-top: #d65a5a;
+    --stop-bottom: #9c2a2a;
+    --clear-top: #c8cdd6;
+    --clear-bottom: #8b919c;
+    --clear-text: #111111;
+}
+
+/* ---------- 2. BASE AND OVEN BODY ---------- */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2vmin;
+    font-family: system-ui, sans-serif;
+    background: radial-gradient(var(--page-light), var(--page-dark));
+}
+
+/* Real microwave proportions (about 1.75 : 1). Everything inside is sized in
+   cqw (1% of the oven width) so the whole oven scales as one piece. */
+.oven {
+    container-type: inline-size;
+    position: relative;
+    width: min(96vw, 1000px, calc(92vh * 1.75));
+    aspect-ratio: 1.75 / 1;
+    display: grid;
+    grid-template-columns: 67% 33%;
+    padding: 2.6%;
+    border-radius: 2.4cqw;
+    border-top: 2px solid var(--body-edge);
+    background: linear-gradient(var(--body-top), var(--body-bottom) 60%);
+    box-shadow: 0 3cqw 5cqw var(--body-shadow), inset 0 0 0 1px var(--body-line);
+
+    /* size tokens (cqw scales with the oven; max() keeps text readable) */
+    --fs-time: max(18px, 5.6cqw);
+    --fs-text: max(9px, 1.45cqw);
+    --fs-small: max(8px, 1.2cqw);
+    --key-h: max(26px, 3.6cqw);
+    --gap: 0.8cqw;
+}
+
+.oven::before,
+.oven::after {
+    content: "";
+    position: absolute;
+    bottom: -1.2cqw;
+    width: 6cqw;
+    height: 1.2cqw;
+    background: var(--foot);
+    border-radius: 0 0 1cqw 1cqw;
+}
+
+.oven::before {
+    left: 8%;
+}
+
+.oven::after {
+    right: 8%;
+}
+
+/* ---------- 3. DOOR AND INTERIOR ---------- */
+.dwrap {
+    position: relative;
+    perspective: 140cqw;
+    background: var(--front-panel);
+    border-radius: 1.6cqw;
+}
+
+.interior {
+    position: absolute;
+    inset: 9% 5%;
+    border-radius: 1.2cqw;
+    overflow: hidden;
+    background: linear-gradient(var(--cavity-shade), transparent 35%), var(--cavity-off);
+    transition: background 0.4s, box-shadow 0.4s;
+}
+
+.interior.light {
+    /* lamp on: door open, disabled, done, alarm */
+    background: linear-gradient(var(--cavity-shade-lamp), transparent 35%),
+        radial-gradient(ellipse at 50% 60%, var(--lamp-centre), var(--lamp-edge) 80%);
+}
+
+.interior.cook {
+    /* cooking: dim amber, brightest at the centre */
+    background: linear-gradient(var(--cavity-shade-cook), transparent 35%),
+        radial-gradient(ellipse at 50% 55%, var(--cook-centre), var(--cook-mid) 58%, var(--cook-edge));
+    box-shadow: inset 0 0 2cqw 0.3cqw var(--cook-rim);
+    animation: glow 2s ease-in-out infinite;
+}
+
+.plate {
+    position: absolute;
+    left: 50%;
+    bottom: 7%;
+    width: 64%;
+    height: 17%;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    border: 1px solid var(--plate-edge);
+    background: conic-gradient(var(--plate-a), var(--plate-b), var(--plate-a), var(--plate-b), var(--plate-a));
+}
+
+.food {
+    position: absolute;
+    left: 50%;
+    bottom: 11%;
+    transform: translateX(-50%);
+    font-size: 11cqw;
+    line-height: 1;
+}
+
+.cook .plate {
+    animation: rot 4s linear infinite;
+}
+
+.cook .food {
+    animation: jig 0.9s ease-in-out infinite;
+}
+
+@keyframes rot {
+    to {
+        transform: translateX(-50%) rotate(360deg);
+    }
+}
+
+@keyframes jig {
+    50% {
+        transform: translateX(-50%) translateY(-1.2%) scale(1.03);
+    }
+}
+
+@keyframes glow {
+    50% {
+        filter: brightness(1.06);
+    }
+}
+
+.door {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 1.6cqw;
+    border: 1px solid var(--door-border);
+    box-shadow: 0.6cqw 0 1.6cqw var(--door-shadow);
+    transform-origin: left center;
+    transition: transform 0.9s cubic-bezier(0.3, 0.7, 0.3, 1);
+}
+
+.open .door {
+    transform: rotateY(-84deg);
+}
+
+/* The window is clear; the huge box-shadow paints the black door frame around it. */
+.win {
+    position: absolute;
+    inset: 9% 5%;
+    border-radius: 1.2cqw;
+    border: 0.35cqw solid var(--glass-edge);
+    box-shadow: 0 0 0 60cqw var(--door-frame);
+    background: linear-gradient(130deg, var(--glare) 0 18%, transparent 18% 22%, var(--glare-soft) 22% 28%, transparent 28%),
+        var(--glass-closed);
+    transition: background 0.5s;
+}
+
+.interior.light~.door .win {
+    background: linear-gradient(130deg, var(--glare) 0 18%, transparent 18% 22%, var(--glare-soft) 22% 28%, transparent 28%),
+        var(--glass-lamp);
+}
+
+.dwrap.cook .interior.light~.door .win {
+    background: linear-gradient(130deg, var(--glare-cook) 0 18%, transparent 18% 22%, var(--glare-cook-soft) 22% 28%, transparent 28%),
+        var(--glass-cook);
+}
+
+/* perforated mesh: the little dots seen on a real microwave door */
+.win::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(circle, transparent 31%, var(--mesh) 48%) 0 0 / max(4px, 0.55cqw) max(4px, 0.55cqw);
+}
+
+.brand {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 2.6%;
+    text-align: center;
+    font: 600 max(8px, 1.3cqw) system-ui;
+    letter-spacing: 0.4em;
+    color: var(--brand);
+}
+
+/* ---------- 4. CONTROL PANEL ---------- */
+.panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1cqw;
+    padding: 0 0 0 2%;
+    min-width: 0;
+}
+
+.led {
+    padding: 0.8cqw 1cqw;
+    text-align: center;
+    background: var(--led-bg);
+    border: 1px solid var(--led-border);
+    border-radius: 0.8cqw;
+    color: var(--led-text);
+    text-shadow: 0 0 6px var(--led-glow);
+    font-family: "Courier New", monospace;
+}
+
+.time {
+    font-size: var(--fs-time);
+    font-weight: bold;
+    line-height: 1.1;
+}
+
+.msg {
+    font-size: var(--fs-text);
+    min-height: 2.4em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--gap);
+}
+
+button {
+    min-height: var(--key-h);
+    padding: 0;
+    font: 600 var(--fs-text) system-ui;
+    color: var(--key-text);
+    background: linear-gradient(var(--key-top), var(--key-bottom));
+    border: 1px solid var(--key-border);
+    border-radius: 0.7cqw;
+    cursor: pointer;
+}
+
+button:active {
+    transform: translateY(1px);
+    filter: brightness(0.9);
+}
+
+button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+button:focus-visible {
+    outline: 2px solid var(--focus);
+}
+
+.go {
+    background: linear-gradient(var(--go-top), var(--go-bottom));
+}
+
+.halt {
+    background: linear-gradient(var(--stop-top), var(--stop-bottom));
+}
+
+.clr {
+    background: linear-gradient(var(--clear-top), var(--clear-bottom));
+    color: var(--clear-text);
+}
+
+.s2 {
+    grid-column: span 2;
+}
+
+.r2 {
+    grid-row: span 2;
+}
+
+.status {
+    margin-top: auto;
+    font: var(--fs-small) system-ui;
+    color: var(--muted);
+}
+
+details {
+    font: var(--fs-small) system-ui;
+    color: var(--muted);
+}
+
+/* ---------- 5. RESPONSIVE RULES ---------- */
+/* Tablet / small laptop: keep the oven proportions, make text a little larger */
+@media (max-width: 900px) {
+    .oven {
+        --fs-text: max(10px, 1.6cqw);
+        --fs-small: max(9px, 1.3cqw);
+        --key-h: max(30px, 3.8cqw);
+    }
+}
+
+/* Phone: stack the door above the controls and use touch-sized keys */
+@media (max-width: 700px) {
+    .oven {
+        width: 96vw;
+        aspect-ratio: auto;
+        grid-template-columns: 1fr;
+        gap: clamp(8px, 3vw, 14px);
+        padding: clamp(8px, 3vw, 14px);
+        border-radius: 4vw;
+        --fs-time: clamp(28px, 9vw, 44px);
+        --fs-text: clamp(13px, 3.6vw, 16px);
+        --fs-small: clamp(11px, 3vw, 13px);
+        --key-h: clamp(40px, 11vw, 52px);
+        --gap: clamp(5px, 1.6vw, 8px);
+    }
+
+    .oven::before,
+    .oven::after {
+        display: none;
+    }
+
+    .dwrap {
+        aspect-ratio: 1.5 / 1;
+        border-radius: 3vw;
+    }
+
+    .interior,
+    .win {
+        border-radius: 2.4vw;
+    }
+
+    .food {
+        font-size: clamp(48px, 18vw, 110px);
+    }
+
+    .panel {
+        padding: 0;
+        gap: clamp(6px, 2vw, 10px);
+    }
+
+    .led {
+        padding: 8px 10px;
+        border-radius: 8px;
+    }
+
+    button {
+        border-radius: 8px;
+    }
+
+    .brand {
+        font-size: clamp(8px, 2.4vw, 12px);
+    }
+}
+
+/* Very small phones */
+@media (max-width: 380px) {
+    .brand {
+        display: none;
+    }
+}
+
+/* Short landscape windows: the width rule above already uses vh, so just tighten the page padding */
+@media (max-height: 480px) {
+    body {
+        padding: 1vmin;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .interior.cook,
+    .cook .plate,
+    .cook .food {
+        animation: none;
+    }
+
+    .door,
+    .interior,
+    .win {
+        transition: none;
+    }
+}
