@@ -258,16 +258,7 @@ body {
     background: radial-gradient(circle, transparent 31%, var(--mesh) 48%) 0 0 / max(4px, 0.55cqw) max(4px, 0.55cqw);
 }
 
-.brand {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 2.6%;
-    text-align: center;
-    font: 600 max(8px, 1.3cqw) system-ui;
-    letter-spacing: 0.4em;
-    color: var(--brand);
-}
+
 
 /* ---------- 4. CONTROL PANEL ---------- */
 .panel {
